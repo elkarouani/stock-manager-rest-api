@@ -5,3 +5,13 @@ class Category(models.Model):
 
     def __str__(self):
         return self.title
+
+class Product(models.Model):
+    title = models.CharField(verbose_name="Product title", max_length=100)
+    description = models.TextField(verbose_name="Product description")
+    quantity = models.IntegerField(verbose_name="Product quantity")
+    price = models.DecimalField(verbose_name="Product price", max_digits=8, decimal_places=2)
+    category = models.ForeignKey(Category, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.title
