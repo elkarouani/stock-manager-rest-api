@@ -6,6 +6,9 @@ class Category(models.Model):
     def __str__(self):
         return self.title
 
+    class Meta:
+        verbose_name_plural = "Categories"
+
 class Product(models.Model):
     title = models.CharField(verbose_name="Product title", max_length=100)
     description = models.TextField(verbose_name="Product description")
