@@ -17,6 +17,17 @@ class ProductsViewSet(ModelViewSet):
     filter_fields = ['category', 'is_run_out']
     search_fields = ['title']
 
+    def update(self, request, *args, **kwargs):
+        partial = True
+        instance = self.get_object()
+        serializer = self.get_serializer(instance,
+data=request.data, partial=partial)
+        serializer.is_valid(raise_exception=True)
+        
+        validated_quantity = serializer.validated_data['quantity']
+        serializer.validated_data['is_run_out'] = False if validated_quantity > 0 else True
+        serializer.save()
+
     @action(detail=True, methods=['get'])
     def run_out(self, request, pk=None):
         product = self.get_object()
