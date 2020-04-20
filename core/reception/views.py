@@ -16,3 +16,27 @@ class CommandsViewSet(ModelViewSet):
         product_instance.save()
         serializer.save()
         return Response({'status': "The command is successfully applied"})
+
+    def update(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+
+        previous_product = instance.product
+        previous_quantity = instance.command_quantity
+        new_product = serializer.validated_data['product']
+        new_quantity = serializer.validated_data['command_quantity']
+        
+        if previous_product == new_product :
+            new_product.quantity -= (new_quantity - previous_quantity)
+            new_product.save()
+        else :
+            previous_product.quantity += previous_quantity
+            new_product.quantity -= new_quantity
+            previous_product.save()
+            new_product.save()
+
+        serializer.save()
+        return Response({'status': "The command is updated successfully"})
+
+
