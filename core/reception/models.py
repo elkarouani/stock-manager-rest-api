@@ -7,6 +7,8 @@ class Command(models.Model):
     command_token = models.CharField(verbose_name="Command Token", max_length=10)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     command_quantity = models.IntegerField(verbose_name="Requested Quantity")
+    created_at = models.DateField(verbose_name="Created At", auto_now_add=True)
+    updated_at = models.DateField(verbose_name="Modified At", auto_now=True)
 
     def __str__(self):
         return self.client_name + ': ' + self.product.title
