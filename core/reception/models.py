@@ -9,6 +9,7 @@ class Command(models.Model):
     command_quantity = models.IntegerField(verbose_name="Requested Quantity")
     created_at = models.DateField(verbose_name="Created At", auto_now_add=True)
     updated_at = models.DateField(verbose_name="Modified At", auto_now=True)
+    is_active = models.BooleanField(verbose_name="Is Active ?", default=True)
 
     def __str__(self):
         return self.client_name + ': ' + self.product.title
