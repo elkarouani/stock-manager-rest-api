@@ -1,6 +1,7 @@
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.response import Response
 from rest_framework.decorators import action
+from rest_framework.filters import SearchFilter
 from .serializers import CommandsSerializer
 from .models import Command
 from stock.models import Product
@@ -8,6 +9,8 @@ from stock.models import Product
 class CommandsViewSet(ModelViewSet):
     serializer_class = CommandsSerializer
     queryset = Command.objects.all()
+    filter_backends = [SearchFilter]
+    search_fields = ['client_cin', 'command_token']
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
