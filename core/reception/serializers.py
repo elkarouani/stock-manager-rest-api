@@ -4,4 +4,4 @@ from .models import Command
 class CommandsSerializer(ModelSerializer):
     class Meta:
         model = Command
-        exclude = ('created_at', 'updated_at', 'is_active',)
+        exclude = ('created_at', 'updated_at',)
