@@ -1,3 +1,7 @@
-from django.shortcuts import render
+from rest_framework.viewsets import ModelViewSet
+from .models import history
+from .serializers import HistoriesSerializer
 
-# Create your views here.
+class HistoriesViewSet(ModelViewSet):
+    queryset = history.objects.order_by('created_at')
+    serializer_class = HistoriesSerializer
