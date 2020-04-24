@@ -1,0 +1,6 @@
+from django.contrib import admin
+from .models import Category, Product
+from reversion import register
+
+admin.site.register(Product)
+register(Category)
