@@ -16,7 +16,7 @@ class CategoriesViewSet(ModelViewSet):
         category = Category.objects.get(pk=pk)
         print(Version.objects.get_for_object(category))
         version = Version.objects.get_for_object(category)[1]
-        version.revision.revert()
+        version.revision.revert(delete=True)
 
         return Response({'status': "Changes reverted successfully"})
 

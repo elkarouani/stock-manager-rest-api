@@ -1,6 +1,12 @@
 from django.contrib import admin
 from .models import Category, Product
-from reversion import register
+from reversion.admin import VersionAdmin
 
-admin.site.register(Product)
-register(Category)
+@admin.register(Category)
+class CategoryModelAdmin(VersionAdmin):
+    pass
+
+@admin.register(Product)
+class ProductModelAdmin(VersionAdmin):
+    pass
+
