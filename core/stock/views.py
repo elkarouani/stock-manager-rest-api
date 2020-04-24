@@ -20,6 +20,13 @@ class CategoriesViewSet(ModelViewSet):
 
         return Response({'status': "Changes reverted successfully"})
 
+    @action(detail=False, methods=['get'])
+    def recover_last_delete(self, request, pk=None):
+        deleted_version = Version.objects.get_deleted(Category)[0]
+        deleted_version.revision.revert()
+
+        return Response({'status': "Last deleted object is recovered successfully"})
+
 class ProductsViewSet(ModelViewSet):
     queryset = Product.objects.all()
     serializer_class = ProductsSerializer

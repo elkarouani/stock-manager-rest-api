@@ -16,9 +16,16 @@ class CategoriesViewSet(ModelViewSet):
         category = Category.objects.get(pk=pk)
         print(Version.objects.get_for_object(category))
         version = Version.objects.get_for_object(category)[1]
-        version.revision.revert(delete=True)
+        version.revision.revert()
 
         return Response({'status': "Changes reverted successfully"})
+
+    @action(detail=False, methods=['get'])
+    def recover_last_delete(self, request, pk=None):
+        delete_version = Version.objects.get_deleted(Category)[0]
+        deleted_version.revision.revert()
+
+        return Response({'status': "Last deleted object is recovered successfully"})
 
 class ProductsViewSet(ModelViewSet):
     queryset = Product.objects.all()
