@@ -12,20 +12,19 @@ class CategoriesViewSet(ModelViewSet):
     serializer_class = CategoriesSerializer
 
     @action(detail=True, methods=['get'])
-    def undo_changes(self, request, pk=None):
+    def undo_last_changes(self, request, pk=None):
         category = Category.objects.get(pk=pk)
-        print(Version.objects.get_for_object(category))
         version = Version.objects.get_for_object(category)[1]
         version.revision.revert()
 
-        return Response({'status': "Changes reverted successfully"})
+        return Response({'status': "Last Changes reverted successfully"})
 
     @action(detail=False, methods=['get'])
     def recover_last_delete(self, request, pk=None):
         deleted_version = Version.objects.get_deleted(Category)[0]
         deleted_version.revision.revert()
 
-        return Response({'status': "Last deleted object is recovered successfully"})
+        return Response({'status': "Last deleted category is recovered successfully"})
 
 class ProductsViewSet(ModelViewSet):
     queryset = Product.objects.all()
@@ -33,6 +32,21 @@ class ProductsViewSet(ModelViewSet):
     filter_backends = [DjangoFilterBackend, SearchFilter]
     filter_fields = ['category', 'is_run_out']
     search_fields = ['title']
+
+    @action(detail=True, methods=['get'])
+    def undo_last_changes(self, request, pk=None):
+        product = Product.objects.get(pk=pk)
+        latest_product_version = Version.objects.get_for_object(product)[1]
+        latest_product_version.revision.revert()
+
+        return Response({'status': "Last changes reverted successfully"})
+
+    @action(detail=False, methods=['get'])
+    def recover_last_delete(self, request, pk=None):
+        latest_deleted_version = Version.objects.get_deleted(Product)[0]
+        latest_deleted_version.revision.revert()
+
+        return Response({'status': "Last deleted product is recovered successfully"})
 
     def update(self, request, *args, **kwargs):
         partial = True
@@ -44,6 +58,8 @@ data=request.data, partial=partial)
         validated_quantity = serializer.validated_data['quantity']
         serializer.validated_data['is_run_out'] = False if validated_quantity > 0 else True
         serializer.save()
+        
+        return Response({'status': "The product is updated successfully"})
 
     @action(detail=True, methods=['get'])
     def run_out(self, request, pk=None):
@@ -51,6 +67,7 @@ data=request.data, partial=partial)
         product.is_run_out = True
         product.quantity = 0
         product.save()
+
         return Response({'status': "The product is run out of storage now !"})
 
 
