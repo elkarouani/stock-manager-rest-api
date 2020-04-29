@@ -22,9 +22,12 @@ class CategoriesViewSet(ModelViewSet):
     @action(detail=False, methods=['get'])
     def recover_last_delete(self, request, pk=None):
         deleted_version = Version.objects.get_deleted(Category)[0]
+        deleted_category = deleted_version._object_version.object
         deleted_version.revision.revert()
+        for index in range(deleted_category.quantity - 1):
+            Version.objects.get_deleted(Product)[0].revision.revert()
 
-        return Response({'status': "Last deleted category is recovered successfully"})
+        return Response({'status': "in maintaining state"})
 
 class ProductsViewSet(ModelViewSet):
     queryset = Product.objects.all()
@@ -47,6 +50,16 @@ class ProductsViewSet(ModelViewSet):
         latest_deleted_version.revision.revert()
 
         return Response({'status': "Last deleted product is recovered successfully"})
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        category_instance = serializer.validated_data['category']
+        category_instance.quantity += 1
+        category_instance.save()
+        serializer.save()
+        
+        return Response({'status': "Product is created successfully"})
 
     def update(self, request, *args, **kwargs):
         partial = True
